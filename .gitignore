@@ -1,0 +1,6 @@
+*.retry
+.direnv
+.envrc
+env
+ssh
+dev.ini

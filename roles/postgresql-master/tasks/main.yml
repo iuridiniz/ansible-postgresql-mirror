@@ -1,0 +1,30 @@
+---
+# tasks file for postgresql-master
+
+- name: Install psycopg in order to add users
+  apt: 
+    name: python-psycopg2
+    state: present
+
+- name: Add extra configuration in order to allow streaming replication from here
+  template:     
+    src: postgresql-extra.conf-version-11.j2
+    dest: /etc/postgresql/11/main/conf.d/master.conf
+  notify: restart postgresql
+
+- name: Create ROLE replicant
+  postgresql_user:
+    name: replicant
+    password: "{{ replicant_passwd }}"
+    role_attr_flags: LOGIN,REPLICATION
+    state: present
+  become: yes
+  become_user: postgres
+  become_method: su
+
+- name: Permit user 'replicant' replication from outside 
+  blockinfile:
+    dest: /etc/postgresql/11/main/pg_hba.conf
+    block: |
+      host    replication     replicant       0.0.0.0/0                md5
+  notify: reload postgresql

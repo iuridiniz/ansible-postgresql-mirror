@@ -1,0 +1,8 @@
+---
+# tasks file for common
+- name: support https for apt-get
+  apt: 
+    name: apt-transport-https
+    state: present
+
+- include: openssl.yml

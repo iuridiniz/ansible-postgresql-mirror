@@ -1,0 +1,6 @@
+# SSL
+---
+- name: install SSL certificates
+  apt: 
+    name: ca-certificates
+    state: latest

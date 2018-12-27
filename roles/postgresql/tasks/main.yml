@@ -1,0 +1,41 @@
+---
+# tasks file for postgresql
+
+- name: Add apt key from postgresql.org
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: ACCC4CF8
+    state: present
+
+- name: Install postgresql.org repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ansible_distribution_release}}-pgdg main
+    state: present
+
+- name: Install postgresql-11
+  apt:
+    name: postgresql-11
+    state: present
+
+# PGlogical extension 
+- name: Add a key from 2ndquadrant
+  apt_key:
+    data: "{{ lookup('file', '2ndquadrant.asc', errors='strict') }}"
+    state: present
+
+- name: Install pglogical repository
+  apt_repository: 
+    repo: deb http://dl.2ndquadrant.com/default/release/apt {{ansible_distribution_release}}-2ndquadrant main
+    state: present
+
+- name: Install pglogical extension
+  apt:
+    name: postgresql-11-pglogical
+    state: present
+
+# Configuration
+- name: copy postgresql-11 conf
+  template: 
+    src: postgresql.conf-version-11.j2
+    dest: /etc/postgresql/11/main/postgresql.conf
+  notify: restart postgresql

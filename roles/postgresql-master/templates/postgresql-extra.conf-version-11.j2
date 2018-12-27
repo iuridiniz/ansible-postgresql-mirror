@@ -1,0 +1,14 @@
+listen_addresses = '*'
+
+cluster_name = {{ ansible_nodename }}
+
+archive_mode = off
+archive_command = 'cd .'
+
+wal_level = 'logical'
+max_worker_processes = 10  
+max_wal_senders = 10
+max_wal_size = 1GB
+min_wal_size = 80MB
+max_replication_slots = 10
+hot_standby = on

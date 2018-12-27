@@ -1,0 +1,29 @@
+# postgresql.yml
+---
+- 
+  name: apply the common configuration 
+  hosts: all
+  remote_user: root
+  roles:
+    - common
+
+- 
+  name: apply postgresql common configuration
+  hosts: databases
+  remote_user: root
+  roles:
+    - postgresql
+
+- 
+  name: apply postgresql master node configuration
+  hosts: databases-master
+  remote_user: root
+  roles:
+    - postgresql-master
+
+- 
+  name: apply postgresql slave node configuration
+  hosts: databases-slave
+  remote_user: root
+  roles:
+    - postgresql-slave

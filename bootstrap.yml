@@ -1,0 +1,18 @@
+---
+- name: bootstrap a host without python
+  hosts: all
+  remote_user: root
+  gather_facts: no
+
+
+  tasks:
+  - name: check for any python
+    raw: which python
+    register: has_python
+    ignore_errors: True
+    changed_when: false
+    failed_when: false
+
+  - name: Install python2.7 if no python
+    raw: apt-get update && apt-get -y install python2.7 python-minimal
+    when: has_python.rc != 0
