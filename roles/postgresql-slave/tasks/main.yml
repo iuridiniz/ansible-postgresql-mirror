@@ -1,15 +1,21 @@
 ---
 # tasks file for postgresql-slave
+- name: Check for already in replication
+  stat: path=/var/lib/postgresql/11/main/recovery.conf
+  register: recovery
+
 - name: Stop postgresql slave in order to sync
   service: 
     name: postgresql
     state: stopped
+  when: not recovery.stat.exists
 
 - name: Permit connections from outside
   blockinfile:
     dest: /etc/postgresql/11/main/pg_hba.conf
     block: |
       host      all       all     0.0.0.0/0   md5
+  notify: reload postgresql
 
 - name: EMPTY pgadata and copy ALL from master
   shell: |
@@ -23,8 +29,5 @@
   become: yes
   become_user: postgres
   become_method: su
-
-- name: Start postgresql pos sync
-  service: 
-    name: postgresql
-    state: started
+  when: not recovery.stat.exists
+  notify: start postgresql
