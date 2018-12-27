@@ -4,3 +4,4 @@
 env
 ssh
 dev.ini
+*.hosts
